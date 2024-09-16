@@ -1,0 +1,268 @@
+{
+  "name": "Capturar por email - contatosareas",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const data = items[0].json;\n\n// Função para validar se é um email válido\nfunction isValidEmail(email) {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return emailRegex.test(email);\n}\n\n// Verifica se o parâmetro 'query' está presente\nif (data.query) {\n  // Verifica se o 'email' foi enviado\n  if (!data.body.email) {\n    return [\n      {\n        json: {\n          statusCode: 400,\n          erro: \"O parâmetro 'email' não foi enviado.\"\n        }\n      }\n    ]; \n  }\n  \n  // Valida se o 'email' tem um formato correto\n  if (!isValidEmail(data.body.email)) {\n    return [\n      {\n        json: {\n          statusCode: 400,\n          erro: \"O parâmetro 'email' não é válido.\"\n        }\n      }\n    ]; \n  }\n}\n\n// Se o email for válido, retornar status 200\nreturn [\n  {\n    json: {\n      statusCode: 200,\n    }\n  }\n];\n"
+      },
+      "id": "da205d8b-793e-423c-9adb-10301a7235da",
+      "name": "Valida e-mail",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        380
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "10730e00-71ef-4077-b0f1-cfa32273c470",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "614eeefd-577b-4422-a825-c33d1b9724dc",
+      "name": "Email válido ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "path": "26f56efd-c6f6-4d02-b8de-3e1eee7e9c9a",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "9e65126f-e845-48fe-903f-42d2199f9c7d",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        720,
+        380
+      ],
+      "webhookId": "26f56efd-c6f6-4d02-b8de-3e1eee7e9c9a",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cGqyqbPW52PgqHoP",
+          "name": "Header Auth account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \n  \"error\": \"{{ $('Valida e-mail').item.json.erro }}\"\n}",
+        "options": {
+          "responseCode": "={{ $('Valida e-mail').item.json.statusCode }}"
+        }
+      },
+      "id": "11e743c0-7ee6-4e0f-ad23-508da7c12b3f",
+      "name": "Respond to Webhook1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1500,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \n  \"error\": \"E-mail não existe na contatosareas\"\n}",
+        "options": {
+          "responseCode": "={{ $('Valida e-mail').item.json.statusCode }}"
+        }
+      },
+      "id": "105a7558-d837-40f6-8a75-3ad78bb1ab7a",
+      "name": "Respond to Webhook2",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2040,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $('contatosareas por email').all() }}",
+        "options": {}
+      },
+      "id": "51a86960-1fbd-43ec-9696-42fe3ef81acb",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2060,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "32b283b8-d4d2-4d5e-a211-65c9cff29ce7",
+              "leftValue": "={{ $input.item.json.isEmpty() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0bd47ccc-654a-47fa-a474-6deacd49865b",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "collection": "contatosareas",
+        "options": {},
+        "query": "={\n  \"CONTATOS_EMAILS\": \"{{ $('Webhook').item.json.body.email }}\"\n}"
+      },
+      "id": "0bbbe10a-169e-49a4-9156-445aa07d13c6",
+      "name": "contatosareas por email",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.1,
+      "position": [
+        1500,
+        240
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "mongoDb": {
+          "id": "3Yr0PwVu84NEclfs",
+          "name": "MongoDB - SL Master"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Valida e-mail": {
+      "main": [
+        [
+          {
+            "node": "Email válido ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email válido ?": {
+      "main": [
+        [
+          {
+            "node": "contatosareas por email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Valida e-mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contatosareas por email": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "07b1ccc0-5c76-433a-a6bb-841c9a045dcc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1bde62df6affe09b15e0e9ef5aab6f39d328650840a7680042b74641fcfe32db"
+  },
+  "id": "SSl5MHW3ZTpYBaVv",
+  "tags": [
+    {
+      "createdAt": "2024-09-11T19:17:28.634Z",
+      "updatedAt": "2024-09-11T19:17:28.634Z",
+      "id": "EGNENZrRIhbtXAbx",
+      "name": "sustentacao"
+    }
+  ]
+}
