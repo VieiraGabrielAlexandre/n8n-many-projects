@@ -1,0 +1,644 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "01310dfa-c134-4b84-815e-9fbd876970d5",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1660,
+        680
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "x0fDqIEK6dtRFHzL",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "cd561a3c-78d0-4e95-a5da-d61ba5a68475",
+      "name": "Wikipedia",
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "daf105fc-6484-47b9-8029-f7c3a6cb7bdd",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1500,
+        500
+      ],
+      "webhookId": "f3a3d8c4-c662-452a-8d47-667f8b7cb4a5"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "11767822-d884-4d55-8854-a8270c7ae5b3",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2520,
+        700
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "x0fDqIEK6dtRFHzL",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.output }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "erro",
+              "description": "quando contém erros da inteligencia"
+            },
+            {
+              "category": "informativo",
+              "description": "quando contém informações"
+            },
+            {
+              "category": "curiosidade",
+              "description": "Texto para perguntas que se classificam como curiosidades"
+            },
+            {
+              "category": "guerras",
+              "description": "quando o texto descreve algo que aconteceu sobre guerras"
+            },
+            {
+              "category": "animais",
+              "description": "quando o texto está descrevendo algo sobre animais"
+            }
+          ]
+        },
+        "options": {
+          "multiClass": true,
+          "systemPromptTemplate": "Please classify the text provided by the user into one of the following categories: {categories}, and use the provided formatting instructions below. Don't explain, and only output the json.",
+          "enableAutoFixing": true
+        }
+      },
+      "id": "1118380c-36c5-4d97-a16e-59c25fb89412",
+      "name": "Text Classifier",
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        2500,
+        480
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "62d51263-35c3-43e5-9ca3-06a7d32f6d86",
+              "name": "classfier",
+              "value": "erro",
+              "type": "string"
+            },
+            {
+              "id": "173381c1-9857-4eed-af47-850479f63bea",
+              "name": "output",
+              "value": "=contém erros na IA",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4bf744e2-d71e-4bce-b578-3a1948f17a9c",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2920,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85c37daa-d11c-44bc-b72b-0f7723b8414c",
+              "name": "classifier",
+              "value": "informativo",
+              "type": "string"
+            },
+            {
+              "id": "7c579f21-bb41-47aa-8f10-760c3eaa905e",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "67b5795a-a1b0-4516-b212-8110d69dce43",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3180,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85c37daa-d11c-44bc-b72b-0f7723b8414c",
+              "name": "classifier",
+              "value": "curiosidade",
+              "type": "string"
+            },
+            {
+              "id": "7c579f21-bb41-47aa-8f10-760c3eaa905e",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d83b0616-ea3c-498e-89b6-b603f2d0db9e",
+      "name": "Edit Fields2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3360,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85c37daa-d11c-44bc-b72b-0f7723b8414c",
+              "name": "classifier",
+              "value": "guerras",
+              "type": "string"
+            },
+            {
+              "id": "7c579f21-bb41-47aa-8f10-760c3eaa905e",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c58d8025-3aa9-4d2b-bd9c-c787870eb2f9",
+      "name": "Edit Fields3",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3480,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85c37daa-d11c-44bc-b72b-0f7723b8414c",
+              "name": "classifier",
+              "value": "animais",
+              "type": "string"
+            },
+            {
+              "id": "7c579f21-bb41-47aa-8f10-760c3eaa905e",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fc5d2cf4-b531-485f-83bb-6f52490674d7",
+      "name": "Edit Fields4",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3160,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "contadores",
+          "mode": "list",
+          "cachedResultName": "contadores"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "classifier",
+              "value": "={{ $json.classfier }}"
+            },
+            {
+              "column": "text",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "93398916-d47a-4621-a99e-d85b5979ab4d",
+      "name": "MySQL",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        3160,
+        -100
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "icRGHT8cH1UcdDAU",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "contadores",
+          "mode": "list",
+          "cachedResultName": "contadores"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "classifier",
+              "value": "={{ $json.classifier }}"
+            },
+            {
+              "column": "text",
+              "value": "={{ $json.output.substring(0,250) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b014a643-56a5-4599-8ae4-b0a2563aa611",
+      "name": "MySQL1",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        3480,
+        80
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "icRGHT8cH1UcdDAU",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "contadores",
+          "mode": "list",
+          "cachedResultName": "contadores"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "classifier",
+              "value": "={{ $json.classfier }}"
+            },
+            {
+              "column": "text",
+              "value": "={{ $json.output.substring(0,250) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8047c951-7f0e-4cfe-83f4-cf910f9204db",
+      "name": "MySQL2",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        3680,
+        340
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "icRGHT8cH1UcdDAU",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "contadores",
+          "mode": "list",
+          "cachedResultName": "contadores"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "classifier",
+              "value": "={{ $json.classfier }}"
+            },
+            {
+              "column": "text",
+              "value": "={{ $json.output.substring(0,250) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "62d2d3c3-d721-41b2-9264-5e10bda2386b",
+      "name": "MySQL3",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        3720,
+        600
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "icRGHT8cH1UcdDAU",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "contadores",
+          "mode": "list",
+          "cachedResultName": "contadores"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "classifier",
+              "value": "={{ $json.classfier }}"
+            },
+            {
+              "column": "text",
+              "value": "={{ $json.output.substring(0,250) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3a15d670-33a0-48d2-94ba-23531e5d78ec",
+      "name": "MySQL4",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        3420,
+        840
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "icRGHT8cH1UcdDAU",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "2bd14fc2-a26c-455e-9d03-b3c55b88d063",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        1900,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ffd22d66-828b-4908-844b-69f06bb8f951",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        1800,
+        500
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "MySQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "MySQL1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "MySQL2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "MySQL3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "MySQL4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ef6012de-8ea4-47ed-bb6f-6d101abe3128",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a606fd0dd600382d60e66aa9a58f11b16c012c794db0e30eecf7abae8a42657"
+  },
+  "id": "6Ee6oz1sUH2BAaKN",
+  "tags": []
+}
